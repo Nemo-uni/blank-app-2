@@ -95,3 +95,9 @@ if not map_points.empty:
     st.write("Click a marker to see the species and site details.")
 else:
     st.write("No valid fossil sites found for this age range.")
+
+st.markdown(
+    "---\n"
+    "**Citation:** Madurell-Malapeira J. (2025) \"A critical review of the Pliocene and Pleistocene European Felidae fossil record\", Bollettino SPI Vol. 64 (1), pp. 133-163 (doi: 10.4435/BSPI.2025.08)"
+)
+
