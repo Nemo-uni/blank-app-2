@@ -49,7 +49,7 @@ if "selected_age_range" not in st.session_state:
     st.session_state.selected_age_range = "All ages"
 
 st.subheader("Filter by age range")
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4, col5 = st.columns(5)
 if col1.button("All ages"):
     st.session_state.selected_age_range = "All ages"
 if col2.button("0.0-0.99 Ma"):
@@ -58,6 +58,8 @@ if col3.button("1.0-1.99 Ma"):
     st.session_state.selected_age_range = "1.0-1.99 Ma"
 if col4.button("2.0-2.99 Ma"):
     st.session_state.selected_age_range = "2.0-2.99 Ma"
+if col5.button("3.0-3.99 Ma"):
+    st.session_state.selected_age_range = "3.0-3.99 Ma"
 
 selected_range = st.session_state.selected_age_range
 st.write(f"Showing fossils in age range: **{selected_range}**")
@@ -66,6 +68,7 @@ ranges = {
     "0.0-0.99 Ma": (0.0, 0.99),
     "1.0-1.99 Ma": (1.0, 1.99),
     "2.0-2.99 Ma": (2.0, 2.99),
+    "3.0-3.99 Ma": (3.0, 3.99),
 }
 map_points = fossils.dropna(subset=["lat", "lon"])
 if selected_range != "All ages":
