@@ -41,18 +41,6 @@ def load_fossil_data():
     return df
 
 
-def build_marker_icon(color="#2A9D8F"):
-    return folium.DivIcon(
-        icon_size=(20, 20),
-        icon_anchor=(10, 10),
-        html=(
-            "<div style=\"width:20px; height:20px; border-radius:50%; "
-            "background:%s; border:2px solid white; box-shadow:0 0 4px rgba(0,0,0,0.35);\"></div>"
-            % color
-        ),
-    )
-
-
 fossils = load_fossil_data()
 
 st.subheader("Fossil site table")
@@ -101,11 +89,16 @@ if not map_points.empty:
             f"<b>Location:</b> {row['Location']}<br>"
             f"<b>Age:</b> {row['Age']}"
         )
-        folium.Marker(
+        folium.CircleMarker(
             location=(row["lat"], row["lon"]),
+            radius=8,
+            color="white",
+            weight=1,
+            fill=True,
+            fill_color="#2A9D8F",
+            fill_opacity=0.9,
             popup=folium.Popup(popup_html, max_width=300),
             tooltip=row["Species"],
-            icon=build_marker_icon(),
         ).add_to(m)
 
     st_folium(m, width=700, height=500)
