@@ -93,9 +93,10 @@ if not map_points.empty:
     )
     selected_index = row_labels.index(selected_label)
 
-    center_lat = map_points["lat"].mean()
-    center_lon = map_points["lon"].mean()
-    m = folium.Map(location=[center_lat, center_lon], zoom_start=4, tiles="OpenStreetMap")
+    # center the map on the selected point for clarity
+    sel_lat = map_points.loc[selected_index, "lat"]
+    sel_lon = map_points.loc[selected_index, "lon"]
+    m = folium.Map(location=[sel_lat, sel_lon], zoom_start=6, tiles="OpenStreetMap")
 
     for idx, row in map_points.iterrows():
         popup_html = (
@@ -103,7 +104,8 @@ if not map_points.empty:
             f"<b>Location:</b> {row['Location']}<br>"
             f"<b>Age:</b> {row['Age']}"
         )
-        popup = folium.Popup(popup_html, max_width=300, show=(idx == selected_index))
+        popup = folium.Popup(popup_html, max_width=300, show=False)
+        # draw the visible circle marker for every point
         folium.CircleMarker(
             location=(row["lat"], row["lon"]),
             radius=8,
@@ -112,9 +114,18 @@ if not map_points.empty:
             fill=True,
             fill_color="#8B0000",
             fill_opacity=0.9,
-            popup=popup,
             tooltip=row["Species"],
         ).add_to(m)
+
+        # attach an invisible Marker at the selected point so its popup anchors correctly
+        if idx == selected_index:
+            anchor_icon = folium.DivIcon(html='<div style="width:0px;height:0px;"></div>')
+            folium.Marker(
+                location=(row["lat"], row["lon"]),
+                popup=folium.Popup(popup_html, max_width=300, show=True),
+                tooltip=row["Species"],
+                icon=anchor_icon,
+            ).add_to(m)
 
     st_folium(m, width=700, height=500)
     st.write("Select a fossil row above to open the corresponding popup on the map.")
