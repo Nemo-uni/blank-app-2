@@ -82,15 +82,16 @@ if not map_points.empty:
         axis=1,
     ).tolist()
 
+    st.dataframe(map_points)
+
     selected_label = st.selectbox(
         "Select a fossil row to open its popup on the map",
         row_labels,
         index=0,
         help="Choose a row to automatically show its marker popup.",
+        key="row_selectbox",
     )
     selected_index = row_labels.index(selected_label)
-
-    st.dataframe(map_points)
 
     center_lat = map_points["lat"].mean()
     center_lon = map_points["lon"].mean()
