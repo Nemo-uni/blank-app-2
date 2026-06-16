@@ -43,9 +43,6 @@ def load_fossil_data():
 
 fossils = load_fossil_data()
 
-st.subheader("Fossil site table")
-st.dataframe(fossils)
-
 if "selected_age_range" not in st.session_state:
     st.session_state.selected_age_range = "All ages"
 
