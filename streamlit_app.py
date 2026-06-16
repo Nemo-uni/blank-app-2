@@ -89,13 +89,13 @@ if not map_points.empty:
             f"<b>Location:</b> {row['Location']}<br>"
             f"<b>Age:</b> {row['Age']}"
         )
-        folium.CircleMarker(
+        folium.RegularPolygonMarker(
             location=(row["lat"], row["lon"]),
-            radius=8,
-            color="white",
-            weight=1,
+            number_of_sides=3,
+            radius=10,
+            color="red",
             fill=True,
-            fill_color="#2A9D8F",
+            fill_color="red",
             fill_opacity=0.9,
             popup=folium.Popup(popup_html, max_width=300),
             tooltip=row["Species"],
