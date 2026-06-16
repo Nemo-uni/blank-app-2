@@ -43,6 +43,9 @@ def load_fossil_data():
 
 fossils = load_fossil_data()
 
+st.subheader("Fossil site table")
+st.dataframe(fossils)
+
 if "selected_age_range" not in st.session_state:
     st.session_state.selected_age_range = "All ages"
 
@@ -76,59 +79,30 @@ if selected_range != "All ages":
 
 if not map_points.empty:
     st.subheader("Map of fossil sites")
-    map_points = map_points.reset_index(drop=True)
-    row_labels = map_points.apply(
-        lambda row: f"{row['Species']} — {row['Location']} ({row['Age']})",
-        axis=1,
-    ).tolist()
+    center_lat = map_points["lat"].mean()
+    center_lon = map_points["lon"].mean()
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=4, tiles="OpenStreetMap")
 
-    st.dataframe(map_points)
-
-    selected_label = st.selectbox(
-        "Select a fossil row to open its popup on the map",
-        row_labels,
-        index=0,
-        help="Choose a row to automatically show its marker popup.",
-        key="row_selectbox",
-    )
-    selected_index = row_labels.index(selected_label)
-
-    # center the map on the selected point for clarity
-    sel_lat = map_points.loc[selected_index, "lat"]
-    sel_lon = map_points.loc[selected_index, "lon"]
-    m = folium.Map(location=[sel_lat, sel_lon], zoom_start=6, tiles="OpenStreetMap")
-
-    for idx, row in map_points.iterrows():
+    for _, row in map_points.iterrows():
         popup_html = (
             f"<b>Species:</b> {row['Species']}<br>"
             f"<b>Location:</b> {row['Location']}<br>"
             f"<b>Age:</b> {row['Age']}"
         )
-        popup = folium.Popup(popup_html, max_width=300, show=False)
-        # draw the visible circle marker for every point
-        folium.CircleMarker(
+        folium.RegularPolygonMarker(
             location=(row["lat"], row["lon"]),
-            radius=8,
-            color="white",
-            weight=1,
+            number_of_sides=3,
+            radius=10,
+            color="red",
             fill=True,
-            fill_color="#8B0000",
+            fill_color="red",
             fill_opacity=0.9,
+            popup=folium.Popup(popup_html, max_width=300),
             tooltip=row["Species"],
         ).add_to(m)
 
-        # attach an invisible Marker at the selected point so its popup anchors correctly
-        if idx == selected_index:
-            anchor_icon = folium.DivIcon(html='<div style="width:0px;height:0px;"></div>')
-            folium.Marker(
-                location=(row["lat"], row["lon"]),
-                popup=folium.Popup(popup_html, max_width=300, show=True),
-                tooltip=row["Species"],
-                icon=anchor_icon,
-            ).add_to(m)
-
     st_folium(m, width=700, height=500)
-    st.write("Select a fossil row above to open the corresponding popup on the map.")
+    st.write("Click a marker to see the species and site details.")
 else:
     st.write("No valid fossil sites found for this age range.")
 
